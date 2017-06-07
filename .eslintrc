@@ -1,0 +1,15 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "node": true,
+    "mocha": true
+  },
+  "rules": {
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
+    "react/prefer-stateless-function": ["error", { "ignorePureComponents": true }],
+    "import/extensions": "off",
+    "react/jsx-filename-extension": "off"
+  }
+}

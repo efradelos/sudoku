@@ -1,0 +1,45 @@
+.sudoku {
+  text-align: center;
+
+  .sudoku-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-basis: auto;;
+    &:nth-child(3n + 1) {
+      .sudoku-cell {
+        border-top: 2px solid black;
+      }
+    }
+    .sudoku-cell {
+      cursor: pointer;
+      height: 3rem;
+      width: 3rem;
+      padding: 1rem;
+      box-sizing: border-box;
+      border-right: 1px solid black;
+      border-bottom: 1px solid black;
+      color: blue;
+      &.fixed {
+        font-weight: bold;
+        color: black;
+      }
+      &.error {
+        font-weight: bold;
+        color: red;
+      }
+      &:focus {
+        outline: none;
+      }
+      &:nth-child(3n) {
+        border-right: 2px solid black;
+      }
+      &:first-child {
+        border-left: 2px solid black;
+      }
+      &.selected {
+        background: #eee;
+      }
+    }
+  }
+}
