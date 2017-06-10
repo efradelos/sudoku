@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import { extendObservable, observable, action, autorun } from 'mobx';
 import { find, each, times, flatten } from 'lodash';
 
 import DancingLinksSudokuSolver, { BruteForceSudokuSolver } from '../lib/sudoku/solver';
@@ -44,6 +44,7 @@ const example = [
 class SudokuStore {
   @observable board = Board.generate();
   @observable selected = [0, 0];
+  @observable showErrors = false;
 
   @action.bound
   select(row, col) {
@@ -51,10 +52,15 @@ class SudokuStore {
   }
 
   @action.bound
+  toggleShowErrors() {
+    this.showErrors = !this.showErrors;
+  }
+
+  @action.bound
   selectNext() {
     const board = this.board;
     let [row, col] = this.selected;
-    do {
+    while (!board.isFilledOut() && !board.at(row, col).isEmpty()) {
       col += 1;
       if (col >= board.size) {
         row += 1;
@@ -62,7 +68,6 @@ class SudokuStore {
         if (row >= board.size) row = 0;
       }
     }
-    while (!board.at(row, col).isEmpty());
     this.select(row, col);
   }
 
@@ -74,8 +79,19 @@ class SudokuStore {
   }
 
   @action.bound
+  unsetNumber() {
+    const board = this.board;
+    board.at(this.selected[0], this.selected[1]).num = null;
+  }
+
+  @action.bound
   new() {
     this.board = Board.generate();
+  }
+
+  @action.bound
+  reset() {
+    this.board.reset();
   }
 
   @action.bound

@@ -1,5 +1,13 @@
+import { observable } from 'mobx';
+
 class Cell {
-  constructor({ row, col, num, fixed, solution } = { }) {
+  @observable row;
+  @observable col;
+  @observable num;
+  @observable fixed;
+  @observable solution;
+
+  constructor({ row, col, num = 0, fixed, solution } = { }) {
     this.row = row;
     this.col = col;
     this.num = num;

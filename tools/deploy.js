@@ -3,6 +3,8 @@ import GitRepo from 'git-repository';
 import run from './run';
 import clean from './clean';
 import bundle from './bundle';
+import fs from './lib/fs';
+import pkg from '../package.json';
 
 const remote = {
   name: 'production',
@@ -26,6 +28,15 @@ async function deploy() {
   // generates optimized and minimized bundles
   process.argv.push('--release');
   await run(bundle);
+  await fs.writeFile('./dist/package.json', JSON.stringify({
+    private: true,
+    engines: pkg.engines,
+    dependencies: pkg.dependencies,
+    scripts: {
+      start: 'node server.js',
+    },
+  }, null, 2));
+
 
   // Push the contents of the build folder to the remote server via Git
   await repo.add('--all .');

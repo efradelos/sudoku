@@ -6,6 +6,7 @@ class SudokuCell extends PureComponent {
   static propTypes = {
     row: PropTypes.number.isRequired,
     col: PropTypes.number.isRequired,
+    showErrors: PropTypes.bool.isRequired,
     num: PropTypes.number,
     fixed: PropTypes.bool,
     selected: PropTypes.bool,
@@ -22,17 +23,17 @@ class SudokuCell extends PureComponent {
   };
 
   render() {
-    const { row, col, num, selected, error, fixed, select } = this.props;
-    const className = `sudoku-cell${selected ? ' selected' : ''}${fixed ? ' fixed' : ''}${error ? ' error' : ''}`;
+    const { row, col, num, showErrors, selected, error, fixed, select } = this.props;
+    const className = `sudoku-cell${selected ? ' selected' : ''}${fixed ? ' fixed' : ''}${showErrors && error ? ' error' : ''}`;
 
     return (
-      <a
+      <input
+        type="text"
         tabIndex={0}
         className={className}
         onClick={() => select(row, col)}
-      >
-        {num}
-      </a>
+        value={num || ''}
+      />
     );
   }
 }
@@ -47,6 +48,7 @@ const mapToStores = (stores, props) => {
     selected: store.selected[0] === props.row && store.selected[1] === props.col,
     setNumber: stores.sudokuStore.setNumber,
     select: stores.sudokuStore.select,
+    showErrors: stores.sudokuStore.showErrors,
   };
 };
 

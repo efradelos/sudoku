@@ -11,8 +11,9 @@ if (module.hot) {
   module.hot.accept();
 }
 
+const store = new SudokuStore();
 ReactDOM.render(
-  <Provider sudokuStore={new SudokuStore()}>
+  <Provider sudokuStore={store}>
     <App />
   </Provider>,
   document.getElementById('app'),

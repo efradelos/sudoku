@@ -1,20 +1,45 @@
-import { shuffle, times, flatten, every, filter } from 'lodash';
+import { observable } from 'mobx';
+import { shuffle, times, flatten, filter } from 'lodash';
 
 import Solver from './solver';
-import Cell from './cell';
+import Cell from './Cell';
 
 class Board {
+  @observable cells = [];
+  @observable hasSolution = false;
+
+  static coordinatesFromPosition(pos, size) {
+    const row = Math.floor(pos / size);
+    const col = pos % size;
+    return { row, col };
+  }
+
+  static positionFromCoordinates(row, col, size) {
+    return (row * size) + col;
+  }
+
   constructor(size = 9) {
-    this.cells = times(size, row => times(size, col => new Cell({ row, col })));
-    this.hasSolution = false;
+    this.cells = times(
+      size * size,
+      pos => new Cell({ ...Board.coordinatesFromPosition(pos, size) }),
+    );
   }
 
   at(row, col) {
-    return this.cells[row][col];
+    return this.cells.find(c => c.row === row && c.col === col);
+  }
+
+  atPosition(pos) {
+    const { row, col } = Board.coordinatesFromPosition(pos, this.size);
+    return this.at(row, col);
   }
 
   atRow(row) {
-    return this.cells[row];
+    return this.cells.filter(c => c.row === row);
+  }
+
+  atCol(col) {
+    return this.cells.filter(c => c.col === col);
   }
 
   atGrid(grid) {
@@ -24,16 +49,13 @@ class Board {
         grid === (Math.floor(cell.row / gridSize) * gridSize) + Math.floor(cell.col / gridSize)
       );
     };
-    return flatten(this.cells).filter(inGrid);
+    return this.cells.filter(inGrid);
   }
 
   nonEmptyCells() {
-    return filter(flatten(this.cells), cell => !cell.isEmpty());
+    return this.cells.filter(c => !c.isEmpty());
   }
 
-  atCol(col) {
-    return this.cells.map(row => row[col]);
-  }
 
   setGrid(grid, cells) {
     this.atGrid(grid).forEach((cell, index) => {
@@ -42,25 +64,40 @@ class Board {
   }
 
   get size() {
-    return this.cells.length;
-  }
-
-  get gridSize() {
     return Math.sqrt(this.cells.length);
   }
 
+  get gridSize() {
+    return Math.sqrt(this.size);
+  }
+
   toString() {
-    const cells = flatten(this.cells);
-    return cells.map(cell => (cell.isEmpty() ? '.' : cell.num)).join('');
+    return this.cells.map(cell => (cell.isEmpty() ? '.' : cell.num)).join('');
   }
 
   toMatrix() {
-    return this.cells.map(row => row.map(cell => (cell.isEmpty() ? 0 : cell.num)));
+    return times(
+      this.size,
+      row => times(
+        this.size,
+        col => this.at(row, col).num || 0,
+      ),
+    );
   }
 
   fromMatrix(matrix) {
-    flatten(this.cells).forEach((cell) => {
+    this.cells.forEach((cell) => {
       cell.num = matrix[cell.row][cell.col];
+    });
+  }
+
+  isFilledOut() {
+    return this.cells.filter(cell => cell.isEmpty()).length === 0;
+  }
+
+  reset() {
+    this.cells.forEach((cell) => {
+      if (!cell.fixed) cell.num = null;
     });
   }
 
@@ -70,7 +107,7 @@ class Board {
       this.hasSolution = solver.solve(reverse);
     }
     if (this.hasSolution) {
-      flatten(this.cells).forEach((cell) => {
+      this.cells.forEach((cell) => {
         cell.num = cell.solution;
       });
     }
@@ -99,17 +136,15 @@ class Board {
       const board1 = board.clone();
       const board2 = board.clone();
       const position = positions[i];
-      const row = Math.floor(position / size);
-      const col = position % size;
-      board1.at(row, col).num = 0;
-      board2.at(row, col).num = 0;
+      board1.atPosition(position).num = 0;
+      board2.atPosition(position).num = 0;
       board1.solve(false);
       board2.solve(true);
       if (!board1.equals(board2)) {
         board.nonEmptyCells().forEach(cell => cell.fixed = true);
         return board;
       }
-      board.at(row, col).num = null;
+      board.atPosition(position).num = null;
     }
     return board;
   }
