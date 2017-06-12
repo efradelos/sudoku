@@ -1,7 +1,20 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
+import { times } from 'lodash';
 
 import Board from './Board';
+
+const solved = [
+  [1, 3, 0, 5, 7, 9, 6, 2, 8],
+  [2, 6, 9, 3, 4, 8, 7, 1, 5],
+  [5, 7, 8, 1, 2, 6, 3, 9, 4],
+  [4, 2, 5, 8, 9, 7, 1, 3, 6],
+  [8, 9, 3, 6, 1, 4, 2, 5, 7],
+  [7, 1, 6, 2, 3, 5, 4, 8, 9],
+  [3, 8, 7, 9, 6, 2, 5, 4, 1],
+  [9, 4, 1, 7, 5, 3, 8, 6, 2],
+  [6, 5, 2, 4, 8, 1, 9, 7, 3],
+];
 
 describe('Board', () => {
   let board;
@@ -108,5 +121,79 @@ describe('Board', () => {
       const nonEmptyCells = board.nonEmptyCells();
       expect(nonEmptyCells).to.deep.equal([cell]);
     });
+  });
+
+  describe('toString()', () => {
+    beforeEach(() => {
+      board.fromMatrix(solved);
+    });
+
+    it('should return properly formatted sring representation of board', () => {
+      const expected = '13.579628269348715578126394425897136893614257716235489387962541941753862652481973';
+      expect(board.toString()).to.equal(expected);
+    });
+  });
+
+  describe('isFilledOut()', () => {
+    beforeEach(() => {
+      board.fromMatrix(solved);
+    });
+
+    it('should not be filled out', () => {
+      expect(board.isFilledOut()).to.equal(false);
+    });
+
+    it('should be filled out', () => {
+      board.at(0, 2).num = 5;
+      expect(board.isFilledOut()).to.equal(true);
+    });
+  });
+
+  describe('reset()', () => {
+    beforeEach(() => {
+      board.fromMatrix(solved);
+      board.reset();
+    });
+
+    it('should have all cells be null', () => {
+      times(81, (pos) => {
+        expect(board.atPosition(pos).num).to.equal(null);
+      });
+    });
+  });
+
+  describe('clone()', () => {
+    let cloned;
+    beforeEach(() => {
+      board.fromMatrix(solved);
+      cloned = board.clone();
+    });
+
+    it('should create clone of original', () => {
+      times(81, (pos) => {
+        expect(cloned.atPosition(pos).num).to.equal(board.atPosition(pos).num);
+      });
+    });
+  });
+
+  describe('equals()', () => {
+    let board2;
+    beforeEach(() => {
+      board.fromMatrix(solved);
+      board2 = board.clone();
+    });
+
+    /* eslint-disable no-unused-expressions */
+    it('should be equal', () => {
+      expect(board.equals(board2)).to.be.truthy;
+      expect(board2.equals(board)).to.be.truthy;
+    });
+
+    it('should not be equal', () => {
+      board2.at(2, 3).num = 5;
+      expect(board.equals(board2)).to.be.falsey;
+      expect(board2.equals(board)).to.be.falsey;
+    });
+    /* eslint-enable no-unused-expressions */
   });
 });

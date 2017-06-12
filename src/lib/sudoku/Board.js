@@ -1,5 +1,5 @@
 import { observable } from 'mobx';
-import { shuffle, times, flatten, filter } from 'lodash';
+import { shuffle, times } from 'lodash';
 
 import Solver from './solver';
 import Cell from './Cell';
@@ -141,6 +141,7 @@ class Board {
       board1.solve(false);
       board2.solve(true);
       if (!board1.equals(board2)) {
+        // eslint-disable-next-line no-return-assign
         board.nonEmptyCells().forEach(cell => cell.fixed = true);
         return board;
       }
