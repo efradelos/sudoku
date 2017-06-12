@@ -109,5 +109,4 @@ describe('Board', () => {
       expect(nonEmptyCells).to.deep.equal([cell]);
     });
   });
-
 });
