@@ -116,10 +116,10 @@ describe('Board', () => {
 
   describe('setGrid()', () => {
     it('should set all cells in grid', () => {
-      const cell = board.at(3, 4);
-      cell.num = 4;
-      const nonEmptyCells = board.nonEmptyCells();
-      expect(nonEmptyCells).to.deep.equal([cell]);
+      const cells = times(9, num => num + 1);
+      board.setGrid(4, cells);
+      const newCells = board.atGrid(4).map(cell => cell.num);
+      expect(newCells).to.deep.equal(cells);
     });
   });
 
@@ -195,5 +195,40 @@ describe('Board', () => {
       expect(board2.equals(board)).to.be.falsey;
     });
     /* eslint-enable no-unused-expressions */
+  });
+
+  describe('solve()', () => {
+    let solver;
+    beforeEach(() => {
+      solver = sinon.stub(board, 'getSolver');
+    });
+
+    afterEach(() => {
+      solver.restore();
+    });
+
+    it('should return false if solver returns false', () => {
+      solver.returns({ solve: () => false });
+      expect(board.solve()).to.equal(false);
+    });
+
+    it('should return true if solver returns true', () => {
+      solver.returns({ solve: () => true });
+      expect(board.solve()).to.equal(true);
+    });
+
+    it('should set num of each cell to solution', () => {
+      times(81, (num) => {
+        board.atPosition(num).solution = num + 1;
+      });
+      solver.returns({ solve: () => true });
+      times(81, (num) => {
+        expect(board.atPosition(num).num).to.equal(0);
+      });
+      board.solve();
+      times(81, (num) => {
+        expect(board.atPosition(num).num).to.equal(num + 1);
+      });
+    });
   });
 });

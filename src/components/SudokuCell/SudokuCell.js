@@ -33,6 +33,7 @@ class SudokuCell extends PureComponent {
         className={className}
         onClick={() => select(row, col)}
         value={num || ''}
+        readOnly
       />
     );
   }

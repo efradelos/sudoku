@@ -109,7 +109,7 @@ class Board {
 
   solve(reverse = false) {
     if (!this.hasSolution) {
-      const solver = new Solver(this);
+      const solver = this.getSolver();
       this.hasSolution = solver.solve(reverse);
     }
     if (this.hasSolution) {
@@ -128,6 +128,10 @@ class Board {
 
   equals(board) {
     return this.toString() === board.toString();
+  }
+
+  getSolver() {
+    return new Solver(this);
   }
 
   static generate(size = 9) {

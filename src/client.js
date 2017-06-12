@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'mobx-react';
+import { uniqueId } from 'lodash';
 
 import './styles/main.scss';
 import App from './components/App';
@@ -13,7 +14,7 @@ if (module.hot) {
 
 const store = new SudokuStore();
 ReactDOM.render(
-  <Provider sudokuStore={store}>
+  <Provider key={uniqueId()} sudokuStore={store}>
     <App />
   </Provider>,
   document.getElementById('app'),
