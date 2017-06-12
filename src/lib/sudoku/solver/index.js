@@ -1,6 +1,6 @@
-import BruteForceSudokuSolver from './BruteForceSudokuSolver';
+// import BruteForceSudokuSolver from './BruteForceSudokuSolver';
 import DancingLinksSudokuSolver from './DancingLinksSudokuSolver';
 
-export { BruteForceSudokuSolver };
+// export { BruteForceSudokuSolver };
 
 export default DancingLinksSudokuSolver;

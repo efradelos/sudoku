@@ -18,6 +18,12 @@ class Board {
     return (row * size) + col;
   }
 
+  static fromMatrix(matrix) {
+    const board = new Board();
+    board.fromMatrix(matrix);
+    return board;
+  }
+
   constructor(size = 9) {
     this.cells = times(
       size * size,

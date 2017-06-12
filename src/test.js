@@ -1,15 +1,12 @@
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
-import chaiEnzyme from 'chai-enzyme'
+import chaiEnzyme from 'chai-enzyme';
+import { noop } from 'lodash';
 
 chai.use(sinonChai);
 chai.use(chaiEnzyme());
 
 process.env.NODE_ENV = 'test';
-
-function noop() {
-  return null;
-}
 
 require.extensions['.css'] = noop;
 require.extensions['.scss'] = noop;
